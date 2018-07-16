@@ -11,6 +11,7 @@ namespace ToDoList.Tests
     public void Dispose()
     {
       Item.DeleteAll();
+      Category.DeleteAll();
     }
     public ItemTests()
     {
@@ -30,8 +31,8 @@ namespace ToDoList.Tests
     public void Equals_ReturnsTrueIfDescriptionsAreTheSame_Item()
     {
       //Arrange, Action
-      Item firstItem = new Item("Mow the lawn", "Now", 1);
-      Item secondItem = new Item("Mow the lawn", "Now", 1);
+      Item firstItem = new Item("Mow the lawn");
+      Item secondItem = new Item("Mow the lawn");
 
       //Assert
       Assert.AreEqual(firstItem, secondItem);
@@ -41,7 +42,7 @@ namespace ToDoList.Tests
     public void Save_SavesToDatabase_ItemList()
     {
       //Arrange
-      Item testItem = new Item("Mow the lawn", "Now", 1);
+      Item testItem = new Item("Mow the lawn");
 
       //Act
       testItem.Save();
@@ -56,7 +57,7 @@ namespace ToDoList.Tests
     public void Save_AssignsIdToObject_Id()
     {
       //Arrange
-      Item testItem = new Item("Mow the lawn", "Now", 1);
+      Item testItem = new Item("Mow the lawn");
 
       //Act
       testItem.Save();
@@ -72,7 +73,7 @@ namespace ToDoList.Tests
     public void Find_FindsItemInDatabase_Item()
     {
       //Arrange
-      Item testItem = new Item("Mow the lawn", "now", 1);
+      Item testItem = new Item("Mow the lawn");
       testItem.Save();
 
       //Act
@@ -86,8 +87,7 @@ namespace ToDoList.Tests
     {
       //Arrange
       string firstDescription = "Walk the Dog";
-      string dueDate = "now";
-      Item testItem = new Item(firstDescription, dueDate, 1);
+      Item testItem = new Item(firstDescription);
       testItem.Save();
       string secondDescription = "Mow the lawn";
 
@@ -100,24 +100,65 @@ namespace ToDoList.Tests
       Assert.AreEqual(secondDescription, result);
     }
     [TestMethod]
-    public void Delete_A_Specific_ITEM()
+    public void AddCategory_AddsCategoryToItem_CategoryList()
     {
       //Arrange
-      Item newItem1 = new Item("Eat dinner", "today", 1);
-      newItem1.Save();
-      Item newItem2 = new Item("Walk the dog", "tomorrow", 1);
-      newItem2.Save();
-      Assert.IsTrue(Item.GetAll().Count == 2);
+      Item testItem = new Item("Mow the lawn");
+      testItem.Save();
+
+      Category testCategory = new Category("Home stuff");
+      testCategory.Save();
 
       //Act
-      newItem1.Delete();
-      List<Item> expectedList = new List<Item> {newItem2};
-      // Console.WriteLine(newItem1.GetDescription());
+      testItem.AddCategory(testCategory);
+
+      List<Category> result = testItem.GetCategories();
+      List<Category> testList = new List<Category>{testCategory};
 
       //Assert
-      List<Item> outputList = Item.GetAll();
-      Assert.IsTrue(outputList.Count == 1);
-      CollectionAssert.AreEqual(expectedList, outputList);
+      CollectionAssert.AreEqual(testList, result);
+    }
+    [TestMethod]
+    public void GetCategories_ReturnsAllItemCategories_CategoryList()
+    {
+      //Arrange
+      Item testItem = new Item("Mow the lawn");
+      testItem.Save();
+
+      Category testCategory1 = new Category("Home stuff");
+      testCategory1.Save();
+
+      Category testCategory2 = new Category("work stuff");
+      testCategory2.Save();
+
+      //Act
+      testItem.AddCategory(testCategory1);
+      List<Category> result = testItem.GetCategories();
+      List<Category> testList = new List<Category> {testCategory1};
+
+      //Assert
+      CollectionAssert.AreEqual(testList, result);
+    }
+    [TestMethod]
+    public void Delete_DeletesItemAssociationsFromDatabase_ItemList()
+    {
+      //Arrange
+      Category testCategory = new Category("Home stuff");
+      testCategory.Save();
+
+      string testDescription = "Mow the lawn";
+      Item testItem = new Item(testDescription);
+      testItem.Save();
+
+      //Act
+      testItem.AddCategory(testCategory);
+      testItem.Delete();
+
+      List<Item> resultCategoryItems = testCategory.GetItems();
+      List<Item> testCategoryItems = new List<Item> {};
+
+      //Assert
+      CollectionAssert.AreEqual(testCategoryItems, resultCategoryItems);
     }
   }
 }
