@@ -74,7 +74,7 @@ namespace ToDoList.Controllers
        public ActionResult AddCategory(int itemId)
        {
            Item item = Item.Find(itemId);
-           Category category = Category.Find(int.Parse(Request.Form["new-category"]));
+           Category category = Category.Find(int.Parse(Request.Form["category-id"]));
            item.AddCategory(category);
            return RedirectToAction("Details",  new { id = itemId });
        }
