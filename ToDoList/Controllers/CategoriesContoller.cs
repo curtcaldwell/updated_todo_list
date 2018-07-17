@@ -35,6 +35,29 @@ namespace ToDoList.Controllers
       List<Item> allItems = thisCategory.GetItems();
       return View(thisCategory);
     }
+    [HttpGet("/categories/{id}")]
+    public ActionResult Details(int id)
+    {
+      Dictionary<string, object> model = new Dictionary<string, object>();
+      Category selectedCategory = Category.Find(id);
+      List<Item> categoryItems = selectedCategory.GetItems();
+      List<Item> allItems = Item.GetAll();
+      model.Add("selectedCategory", selectedCategory);
+      model.Add("categoryItems", categoryItems);
+      model.Add("allItems", allItems);
+      return View(model);
+    }
+    [HttpPost("/categories/{categoryId}/items/new")]
+       public ActionResult AddItem(int categoryId)
+       {
+           Category category = Category.Find(categoryId);
+           Item item = Item.Find(int.Parse(Request.Form["newitem"]));
+           category.AddItem(item);
+           return RedirectToAction("Details",  new { id = categoryId });
+       }
+
 
   }
+
+
 }

@@ -57,6 +57,28 @@ namespace ToDoList.Controllers
       thisItem.Delete();
       return RedirectToAction("Index");
     }
+    [HttpGet("/items/{id}")]
+       public ActionResult Details(int id)
+       {
+           Dictionary<string, object> model = new Dictionary<string, object>();
+           Item selectedItem = Item.Find(id);
+           List<Category> itemCategories = selectedItem.GetCategories();
+           List<Category> allCategories = Category.GetAll();
+           model.Add("selectedItem", selectedItem);
+           model.Add("itemCategories", itemCategories);
+           model.Add("allCategories", allCategories);
+           return View(model);
+
+       }
+       [HttpPost("/items/{itemId}/categories/new")]
+       public ActionResult AddCategory(int itemId)
+       {
+           Item item = Item.Find(itemId);
+           Category category = Category.Find(int.Parse(Request.Form["new-category"]));
+           item.AddCategory(category);
+           return RedirectToAction("Details",  new { id = itemId });
+       }
+
 
 
       // [HttpPost("/items/delete")]

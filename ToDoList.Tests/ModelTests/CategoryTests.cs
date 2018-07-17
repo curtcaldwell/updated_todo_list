@@ -15,7 +15,7 @@ namespace ToDoList.Tests
     }
     public CategoryTests()
     {
-      DBConfiguration.ConnectionString = "server=localhost;user id=root;password=root;port=8889;database=todo_test;";
+      DBConfiguration.ConnectionString = "server=localhost;user id=root;password=root;port=8889;database=sc_todolist_test;";
     }
 
     [TestMethod]
